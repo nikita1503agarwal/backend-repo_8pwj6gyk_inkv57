@@ -1,19 +1,19 @@
 INFO:     Will watch for changes in these directories: ['/home/workspace']
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [242] using StatReload
-INFO:     Started server process [248]
+INFO:     Started reloader process [362] using StatReload
+INFO:     Started server process [364]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
-INFO:     172.20.0.1:42504 - "HEAD / HTTP/1.1" 405 Method Not Allowed
-INFO:     172.20.0.1:42470 - "GET /api/products/best HTTP/1.1" 200 OK
-INFO:     172.20.0.1:42488 - "GET /api/products/best HTTP/1.1" 200 OK
-INFO:     172.20.0.1:42470 - "GET /api/products/best HTTP/1.1" 200 OK
-INFO:     172.20.0.1:42488 - "GET /api/products/best HTTP/1.1" 200 OK
-INFO:     172.20.0.1:42472 - "GET /api/products/new HTTP/1.1" 200 OK
-INFO:     172.20.0.1:42482 - "GET /api/products/new HTTP/1.1" 200 OK
-INFO:     172.20.0.1:42470 - "GET /api/products/new HTTP/1.1" 200 OK
-INFO:     172.20.0.1:42488 - "GET /api/products/new HTTP/1.1" 200 OK
-INFO:     172.20.0.1:42514 - "GET /api/products/best HTTP/1.1" 200 OK
-INFO:     172.20.0.1:49242 - "GET /api/products/new HTTP/1.1" 200 OK
-INFO:     172.20.0.1:42514 - "GET /api/products/best HTTP/1.1" 200 OK
-INFO:     172.20.0.1:49242 - "GET /api/products/new HTTP/1.1" 200 OK
+INFO:     172.20.0.1:48158 - "HEAD / HTTP/1.1" 405 Method Not Allowed
+INFO:     172.20.0.1:48132 - "GET /api/products/best HTTP/1.1" 200 OK
+INFO:     172.20.0.1:48170 - "GET /api/products/new HTTP/1.1" 200 OK
+INFO:     172.20.0.1:48132 - "GET /api/products/best HTTP/1.1" 200 OK
+INFO:     172.20.0.1:48170 - "GET /api/products/new HTTP/1.1" 200 OK
+INFO:     172.20.0.1:48184 - "GET /api/products/best HTTP/1.1" 200 OK
+INFO:     172.20.0.1:48148 - "GET /api/products/new HTTP/1.1" 200 OK
+INFO:     172.20.0.1:48170 - "GET /api/products/best HTTP/1.1" 200 OK
+INFO:     172.20.0.1:48132 - "GET /api/products/new HTTP/1.1" 200 OK
+INFO:     172.20.0.1:48192 - "GET /api/products/best HTTP/1.1" 200 OK
+INFO:     172.20.0.1:48192 - "GET /api/products/new HTTP/1.1" 200 OK
+INFO:     172.20.0.1:50186 - "GET /api/products/best HTTP/1.1" 200 OK
+INFO:     172.20.0.1:48192 - "GET /api/products/new HTTP/1.1" 200 OK
