@@ -69,6 +69,7 @@ class ProductIn(BaseModel):
     options: Dict[str, List[str]] = Field(default_factory=dict)  # size/color/etc
     is_featured: bool = False
     tags: List[str] = Field(default_factory=list)
+    sale_price: Optional[float] = Field(None, ge=0)
 
 
 class ProductOut(ProductIn):
@@ -225,7 +226,7 @@ def list_products(
 def best_sellers(limit: int = 8):
     if db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
-    cursor = db.product.find({}).sort([("rating.count", -1)]).limit(limit)
+    cursor = db.product.find({}).sort([( "rating.count", -1)]).limit(limit)
     return [serialize_doc(d) for d in cursor]
 
 
@@ -233,7 +234,7 @@ def best_sellers(limit: int = 8):
 def new_arrivals(limit: int = 8):
     if db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
-    cursor = db.product.find({}).sort([("created_at", -1)]).limit(limit)
+    cursor = db.product.find({}).sort([( "created_at", -1)]).limit(limit)
     return [serialize_doc(d) for d in cursor]
 
 
@@ -346,10 +347,11 @@ def seed_products():
             "name": "Classic Tee",
             "brand": "Secret",
             "price": 29.99,
+            "sale_price": 24.99,
             "category": "Apparel",
             "description": "Soft cotton tee",
             "specs": {"material": "100% Cotton"},
-            "images": ["/images/sample1.jpg"],
+            "images": ["https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=800&auto=format&fit=crop"],
             "stock": 42,
             "options": {"size": ["S","M","L","XL"], "color": ["Black","White"]},
             "is_featured": True,
@@ -365,7 +367,7 @@ def seed_products():
             "category": "Apparel",
             "description": "Slim fit denim",
             "specs": {"material": "Denim"},
-            "images": ["/images/sample2.jpg"],
+            "images": ["https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop"],
             "stock": 18,
             "options": {"size": ["28","30","32","34"], "color": ["Blue","Dark Blue"]},
             "is_featured": False,
@@ -378,10 +380,11 @@ def seed_products():
             "name": "Minimal Sneakers",
             "brand": "Secret",
             "price": 79.0,
+            "sale_price": 69.0,
             "category": "Footwear",
             "description": "Clean silhouette",
             "specs": {"material": "Vegan leather"},
-            "images": ["/images/sample3.jpg"],
+            "images": ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop"],
             "stock": 25,
             "options": {"size": ["7","8","9","10","11"], "color": ["White","Black"]},
             "is_featured": True,
@@ -389,10 +392,109 @@ def seed_products():
             "created_at": datetime.now(timezone.utc),
             "updated_at": datetime.now(timezone.utc),
             "rating": {"average": 4.8, "count": 200}
+        },
+        {
+            "name": "No. 7 Eau de Parfum",
+            "brand": "Secret Scents",
+            "price": 110.0,
+            "category": "Fragrance",
+            "description": "Amber, vanilla and cedar. Long-lasting.",
+            "specs": {"volume": "50ml"},
+            "images": ["https://images.unsplash.com/photo-1616606347407-23ca041ac856?q=80&w=800&auto=format&fit=crop"],
+            "stock": 12,
+            "options": {"volume": ["30ml","50ml","100ml"]},
+            "is_featured": True,
+            "tags": ["perfume","fragrance"],
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
+            "rating": {"average": 4.9, "count": 310}
         }
     ]
     db.product.insert_many(sample)
     return {"message": "Seeded sample products", "count": len(sample)}
+
+
+# -----------------------------
+# Auto-seed on startup so homepage is never empty
+# -----------------------------
+
+@app.on_event("startup")
+async def ensure_seed_on_startup():
+    try:
+        if db is not None and db.product.count_documents({}) == 0:
+            await app.router.lifespan_context(app) if False else None  # no-op to keep async signature lint-happy
+            sample = [
+                {
+                    "name": "Classic Tee",
+                    "brand": "Secret",
+                    "price": 29.99,
+                    "sale_price": 24.99,
+                    "category": "Apparel",
+                    "description": "Soft cotton tee",
+                    "specs": {"material": "100% Cotton"},
+                    "images": ["https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=800&auto=format&fit=crop"],
+                    "stock": 42,
+                    "options": {"size": ["S","M","L","XL"], "color": ["Black","White"]},
+                    "is_featured": True,
+                    "tags": ["bestseller", "new"],
+                    "created_at": datetime.now(timezone.utc),
+                    "updated_at": datetime.now(timezone.utc),
+                    "rating": {"average": 4.6, "count": 120}
+                },
+                {
+                    "name": "Everyday Jeans",
+                    "brand": "Secret",
+                    "price": 59.0,
+                    "category": "Apparel",
+                    "description": "Slim fit denim",
+                    "specs": {"material": "Denim"},
+                    "images": ["https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop"],
+                    "stock": 18,
+                    "options": {"size": ["28","30","32","34"], "color": ["Blue","Dark Blue"]},
+                    "is_featured": False,
+                    "tags": ["denim"],
+                    "created_at": datetime.now(timezone.utc),
+                    "updated_at": datetime.now(timezone.utc),
+                    "rating": {"average": 4.3, "count": 80}
+                },
+                {
+                    "name": "Minimal Sneakers",
+                    "brand": "Secret",
+                    "price": 79.0,
+                    "sale_price": 69.0,
+                    "category": "Footwear",
+                    "description": "Clean silhouette",
+                    "specs": {"material": "Vegan leather"},
+                    "images": ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop"],
+                    "stock": 25,
+                    "options": {"size": ["7","8","9","10","11"], "color": ["White","Black"]},
+                    "is_featured": True,
+                    "tags": ["sneakers", "minimal"],
+                    "created_at": datetime.now(timezone.utc),
+                    "updated_at": datetime.now(timezone.utc),
+                    "rating": {"average": 4.8, "count": 200}
+                },
+                {
+                    "name": "No. 7 Eau de Parfum",
+                    "brand": "Secret Scents",
+                    "price": 110.0,
+                    "category": "Fragrance",
+                    "description": "Amber, vanilla and cedar. Long-lasting.",
+                    "specs": {"volume": "50ml"},
+                    "images": ["https://images.unsplash.com/photo-1616606347407-23ca041ac856?q=80&w=800&auto=format&fit=crop"],
+                    "stock": 12,
+                    "options": {"volume": ["30ml","50ml","100ml"]},
+                    "is_featured": True,
+                    "tags": ["perfume","fragrance"],
+                    "created_at": datetime.now(timezone.utc),
+                    "updated_at": datetime.now(timezone.utc),
+                    "rating": {"average": 4.9, "count": 310}
+                }
+            ]
+            db.product.insert_many(sample)
+    except Exception:
+        # Swallow seeding errors to not block startup
+        pass
 
 
 if __name__ == "__main__":
